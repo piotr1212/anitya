@@ -3,7 +3,7 @@
 """ Forms used in anitya. """
 
 from flask.ext import wtf
-from wtforms import TextField, validators, SelectField
+from wtforms import TextField, TextAreaField, validators, SelectField
 
 
 class ProjectForm(wtf.Form):
@@ -30,6 +30,17 @@ class ProjectForm(wtf.Form):
             self.backend.choices = [
                 (backend, backend) for backend in kwargs['backends']
             ]
+
+
+class FlagProjectForm(wtf.Form):
+    reason = TextAreaField('Reason for flagging', [validators.Required()])
+
+    def __init__(self, *args, **kwargs):
+        """ Calls the default constructor with the normal argument but
+        uses the list of backends provided to fill the choices of the
+        drop-down list.
+        """
+        super(FlagProjectForm, self).__init__(*args, **kwargs)
 
 
 class MappingForm(wtf.Form):
