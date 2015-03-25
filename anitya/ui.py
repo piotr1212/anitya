@@ -219,8 +219,10 @@ def projects_search(pattern=None):
     pattern = flask.request.args.get('pattern', pattern) or '*'
     page = flask.request.args.get('page', 1)
 
-    if '*' not in pattern:
+    if '*' not in pattern and not pattern.startswith('!'):
         pattern += '*'
+    elif pattern.startswith('!'):
+        pattern = pattern[1:]
 
     try:
         page = int(page)
@@ -258,8 +260,10 @@ def distro_projects_search(distroname, pattern=None):
     pattern = flask.request.args.get('pattern', pattern) or '*'
     page = flask.request.args.get('page', 1)
 
-    if '*' not in pattern:
+    if '*' not in pattern and not pattern.startswith('!'):
         pattern += '*'
+    elif pattern.startswith('!'):
+        pattern = pattern[1:]
 
     try:
         page = int(page)
