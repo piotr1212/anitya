@@ -2,8 +2,8 @@
 %distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           anitya
-Version:        0.2.0
-Release:        1%{?dist}
+Version:        0.3.0
+Release:        2%{?dist}
 Summary:        Monitor upstream releases and announce them on fedmsg
 
 License:        GPLv2+
@@ -35,6 +35,7 @@ BuildRequires:  python-sqlalchemy > 0.7
 Requires:  python-sqlalchemy > 0.7
 %endif
 
+Requires:  python-alembic
 Requires:  python-flask
 Requires:  python-flask-wtf
 Requires:  python-flask-openid
@@ -88,8 +89,8 @@ install -m 644 files/migrate_wiki.py $RPM_BUILD_ROOT/%{_datadir}/anitya/anitya_m
 install -m 755 files/anitya_cron.py $RPM_BUILD_ROOT/%{_datadir}/anitya/anitya_cron.py
 
 # Install the alembic files
-#cp -r alembic $RPM_BUILD_ROOT/%{_datadir}/anitya/
-#install -m 644 files/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/anitya/alembic.ini
+cp -r alembic $RPM_BUILD_ROOT/%{_datadir}/anitya/
+install -m 644 files/alembic.ini $RPM_BUILD_ROOT/%{_sysconfdir}/anitya/alembic.ini
 
 ## Running the tests would require having flask >= 0.10 which is not present in
 ## epel6
@@ -100,7 +101,7 @@ install -m 755 files/anitya_cron.py $RPM_BUILD_ROOT/%{_datadir}/anitya/anitya_cr
 %doc README.rst LICENSE
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/anitya.conf
 %config(noreplace) %{_sysconfdir}/anitya/anitya.cfg
-#config(noreplace) %{_sysconfdir}/anitya/alembic.ini
+%config(noreplace) %{_sysconfdir}/anitya/alembic.ini
 %dir %{_sysconfdir}/anitya/
 %{_datadir}/anitya/
 %{python_sitelib}/anitya/
@@ -109,6 +110,22 @@ install -m 755 files/anitya_cron.py $RPM_BUILD_ROOT/%{_datadir}/anitya/anitya_cr
 
 
 %changelog
+* Tue Mar 31 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.3.0-2
+- Fix changelog of version 0.3.0-1
+- Include and install the alembic files
+
+* Tue Mar 31 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.3.0-1
+- Converted Google project name to lower case in their URL (Aayush Kasurde)
+- Fix the casing of GitHub (Aayush Kasurde)
+- Allow projects to make insecure http calls
+- Update the GNOME backend to rely on the cache.json if present
+- Include in the fedmsg message if the new version found is odd or not
+- Strip leading v from versions before we compare them (Ralph Bean)
+- Update instructions in the README (Shagufta)
+- Only place the name in the regex if it is asked for
+- When searching show first the results of exact match search then the
+  results of a broader search
+
 * Thu Feb 26 2015 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.2.0
 - Fix doc typos (reported by tibbs, fixed by Ralph Bean)
 - Fix typo when unable to retrieve the latest version (Thomas Spura)

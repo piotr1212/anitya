@@ -46,6 +46,11 @@ def upstream_cmp(v1, v2):
 
     """
 
+    # Strip leading 'v' characters; turn v1.0 into 1.0.
+    # https://github.com/fedora-infra/anitya/issues/110
+    v1 = v1.lstrip('v')
+    v2 = v2.lstrip('v')
+
     v1, rc1, rcn1 = split_rc(v1)
     v2, rc2, rcn2 = split_rc(v2)
 
@@ -220,7 +225,7 @@ class BaseBackend(object):
         return anitya.order_versions(vlist)
 
     @classmethod
-    def call_url(self, url):
+    def call_url(self, url, insecure=False):
         ''' Dedicated method to query a URL.
 
         It is important to use this method as it allows to query them with
@@ -256,17 +261,17 @@ class BaseBackend(object):
                 'From': from_email,
             }
 
-            return requests.get(url, headers=headers)
+            return requests.get(url, headers=headers, verify=not insecure)
 
 
-def get_versions_by_regex(url, regex, project):
+def get_versions_by_regex(url, regex, project, insecure=False):
     ''' For the provided url, return all the version retrieved via the
     specified regular expression.
 
     '''
 
     try:
-        req = BaseBackend.call_url(url)
+        req = BaseBackend.call_url(url, insecure=insecure)
     except Exception, err:
         anitya.LOG.debug('%s ERROR: %s' % (project.name, err.message))
         raise AnityaPluginException(
